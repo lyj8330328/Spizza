@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+  http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <input name="order" required="true" /> <!-- 接收order作为输入 -->
+    
+    <!-- Order -->
+    <view-state id="showOrder"><!-- 展现order的状态 -->
+        <transition on="createPizza" to="createPizza" />
+        <transition on="checkout" to="orderCreated" />
+        <transition on="cancel" to="cancel" />
+    </view-state>
+
+    <view-state id="createPizza" model="flowScope.pizza"> <!-- 创建披萨的状态 -->
+        <on-entry>
+          <set name="flowScope.pizza" 
+              value="new main.java.com.springinaction.pizza.domain.Pizza()" />
+          <evaluate result="viewScope.toppingsList" 
+              expression="T(main.java.com.springinaction.pizza.domain.Topping).asList()" />
+        </on-entry>
+        <transition on="addPizza" to="showOrder">
+          <evaluate expression="order.addPizza(flowScope.pizza)" />
+        </transition>
+        <transition on="cancel" to="showOrder" />
+    </view-state>
+
+        
+    <!-- End state -->
+    <end-state id="cancel" /> <!-- 取消的结束状态 -->
+    <end-state id="orderCreated" /> <!-- 创建订单的结束状态 -->
+</flow>
